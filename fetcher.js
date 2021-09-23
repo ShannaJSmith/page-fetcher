@@ -1,16 +1,23 @@
-const { fstat } = require('fs');
+const fs = require('fs');
 const request = require('request');
+const url = process.argv[2];
+const path = process.argv[3];
 
-const cmlArgs = process.argv.slice(2);
-
-request('http://www.example.edu', (error, response, body) => {
-
-});
-
-
-fs.writeFile('/vagrant/w1/d3/page-fetcher/file.txt', data, err => {
+request(url, (err, response, body) => {
   if (err) {
-    console.error(err)
-    return
+    console.log('ERROR: ', err); 
+    return false;
   }
-})
+  if (response) {
+    console.log('statusCode: ', response && response.statusCode);
+    fs.writeFile(path, body, (err) => {
+      if (err) {
+        console.error('ERROR: ', err);
+        return false;
+      } else {
+        console.log(`Downloaded and saved ${body.length} bytes to ${path}`);
+        return true;
+      }
+    });
+  }
+});
